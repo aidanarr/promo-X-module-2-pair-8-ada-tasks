@@ -30,54 +30,55 @@ taskArray();
 
 const allLi = document.querySelectorAll('li');
 
-// console.log(allLi);
 
-// function strikeLi(){
-//     for (const chore of tasks){
-        
-//         if(chore.completed === true){
-            
-//             const taskIndex = tasks.indexOf(chore);
-//             // console.log(`Esta tarea está completa` + tasks.indexOf(chore));
+const checkboxes = document.querySelectorAll(".js_checkbox");
 
-//             const doneLi = allLi[taskIndex];
-
-//             // console.log(doneLi);
-            
-//             doneLi.classList.add('tachado');
-//         }
-        
-//     }
-// }
-
-const checkbox = document.querySelectorAll(".js_checkbox");
-
-console.log(checkbox);
 
 function strikeLi(array){
-  // for (const item of checkbox) {
-  //   if (item.value === "true") {
-  //     item.checked = true;
-
-  //     // const taskIndex = checkbox.indexOf(item);
-  //     // console.log(taskIndex);
-  //     // const doneLi = allLi[taskIndex];
-  //     // doneLi.classList.add("tachado");
-  //   }
   for (let i = 0; i < array.length; i++) {
     if (array[i].value === "true") {
       array[i].checked = true;
       allLi[i].classList.add("tachado");
     } else {
       allLi[i].classList.remove("tachado");
+      array[i].checked = false;
     }
     console.log(array[i].value);
   }
 
 }
 
+strikeLi(checkboxes);
 
 
-// strikeLi(checkbox);
+function strikeToggle(event){
+  const boxClicked = event.target;
+  const liClicked = boxClicked.parentNode;
+
+  if(boxClicked.value === 'true'){
+   boxClicked.value = false;
+   liClicked.classList.remove('tachado');
+   boxClicked.checked = false;
+  }else{
+    boxClicked.value = true;
+    liClicked.classList.add('tachado');
+    boxClicked.checked = true;
+  }
+}
+
+
+
+const handleClick = (event) =>{
+  strikeToggle(event);
+  
+  
+}
+
+for (const box of checkboxes){
+  box.addEventListener('click', handleClick);
+}
+
+
+//Falta modificar el array tasks. Hay que hacer todo esto de otra forma
 
 
