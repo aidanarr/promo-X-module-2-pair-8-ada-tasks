@@ -1,7 +1,8 @@
 'use strict';
 
 const tasksUl = document.querySelector('.js-taskList');
-
+const filterBtn = document.querySelector('.js-btn-filter');
+const filterInput = document.querySelector('.js-text-task-filter');
 
 const tasks = [
     { name: 'Recoger setas en el campo', completed: true },
@@ -86,3 +87,24 @@ for (const box of checkboxes){
 
 
 console.log(allLi);
+
+//filtrar
+
+function filter(){
+  const valueInput = filterInput.value;
+  tasksUl.innerHTML = '';
+
+  for (const task of tasks){
+    if(task.name.toLocaleLowerCase().includes(valueInput.toLocaleLowerCase())){
+      tasksUl.innerHTML += renderTask(task);
+    }
+  }
+}
+
+
+const handleFilter = (event)=>{
+  event.preventDefault();
+  filter(event);
+}
+
+filterBtn.addEventListener('click', handleFilter);
