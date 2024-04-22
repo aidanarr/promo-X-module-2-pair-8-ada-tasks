@@ -18,10 +18,9 @@ function renderTask(task){
     
   }
 
-console.log
+
 const taskArray = () =>{
     for (const chore of tasks){
-        
         renderTask(chore.name);
     }
 }
@@ -31,13 +30,22 @@ taskArray();
 
 const allLi = document.querySelectorAll('li');
 
+// console.log(allLi);
+
 function strikeLi(){
     for (const chore of tasks){
         
         if(chore.completed === true){
             
-            allLi.classList.add('tachado');
-        };
+            const taskIndex = tasks.indexOf(chore);
+            // console.log(`Esta tarea está completa` + tasks.indexOf(chore));
+
+            const doneLi = allLi[taskIndex];
+
+            // console.log(doneLi);
+            
+            doneLi.classList.add('tachado');
+        }
         
     }
 }
