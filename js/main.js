@@ -13,64 +13,70 @@ const tasks = [
     },
   ];
 
-function renderTask(task){
-    return tasksUl.innerHTML += `<li><input class="js_checkbox" type="checkbox" value="${task.completed}"> ${task.name}</li>`;
-  }
 
+//1. Pintar los li con los datos del array tasks --> renderTask por cada task del array --> si task.completed===true li class tachado
+
+
+let taskLi = '';
+
+function renderTask(task){
+  if (task.completed === true ){
+    taskLi = `<li class="tachado"><input class="js_checkbox" type="checkbox" value="${task.completed}" checked> ${task.name}</li>`;
+  }else{
+    taskLi = `<li><input class="js_checkbox" type="checkbox" value="${task.completed}"> ${task.name}</li>`;
+  }
+     return taskLi;
+     
+  }
+  console.log(taskLi);
   
 
 const taskArray = () =>{
-    for (const chore of tasks){
-        renderTask(chore);
+    for (const task of tasks){
+      tasksUl.innerHTML += renderTask(task);
     }
 }
 
 taskArray();
 
 
+//2. Escuchar el botón. si el valor de completed es true --> ponerlo en false, quitar la clase tachado --> modificar el array original
+
 const allLi = document.querySelectorAll('li');
-
-
 const checkboxes = document.querySelectorAll(".js_checkbox");
 
+let checkboxesArray = []; //el querySelectorAll devuelve un OBJETO (Nodelist) con comportamiento de array pero hay que convertirlo en array para que te deje pillar el indexOf
 
-function strikeLi(array){
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].value === "true") {
-      array[i].checked = true;
-      allLi[i].classList.add("tachado");
-    } else {
-      allLi[i].classList.remove("tachado");
-      array[i].checked = false;
-    }
-    console.log(array[i].value);
-  }
-
+for(const box of checkboxes){
+  checkboxesArray.push(box);
 }
 
-strikeLi(checkboxes);
+console.log(checkboxesArray);
 
 
-function strikeToggle(event){
+function completeToggle(event){
   const boxClicked = event.target;
   const liClicked = boxClicked.parentNode;
-
+  const index = checkboxesArray.indexOf(boxClicked);
+  
   if(boxClicked.value === 'true'){
-   boxClicked.value = false;
-   liClicked.classList.remove('tachado');
-   boxClicked.checked = false;
-  }else{
-    boxClicked.value = true;
-    liClicked.classList.add('tachado');
-    boxClicked.checked = true;
-  }
-}
+      tasks[index].completed = false;
+       boxClicked.value = false;
+       liClicked.classList.remove('tachado');
+       boxClicked.checked = false;
+      }else{
+        tasks[index].completed = true;
+        boxClicked.value = true;
+        liClicked.classList.add('tachado');
+        boxClicked.checked = true;
+      }
 
+      console.log(tasks[index]);
+}
 
 
 const handleClick = (event) =>{
-  strikeToggle(event);
-  
+  completeToggle(event);
   
 }
 
@@ -79,6 +85,4 @@ for (const box of checkboxes){
 }
 
 
-//Falta modificar el array tasks. Hay que hacer todo esto de otra forma
-
-
+console.log(allLi);
