@@ -3,90 +3,96 @@
 const tasksUl = document.querySelector('.js-taskList');
 const filterBtn = document.querySelector('.js-btn-filter');
 const filterInput = document.querySelector('.js-text-task-filter');
-
-const tasks = [
-    { name: 'Recoger setas en el campo', completed: true },
-    { name: 'Comprar pilas', completed: true },
-    { name: 'Poner una lavadora de blancos', completed: true },
-    {
-      name: 'Aprender cómo se realizan las peticiones al servidor en JavaScript',
-      completed: false,
-    },
-  ];
+// const GITHUB_USER = '<aidanarr>';
+// const SERVER_URL = `https://dev.adalab.es/api/todo/${GITHUB_USER}`;
+const SERVER_URL = `https://dev.adalab.es/api/todo`;
 
 
-//1. Pintar los li con los datos del array tasks --> renderTask por cada task del array --> si task.completed===true li class tachado
-
-
+let tasks = [];
 let taskLi = '';
 
 function renderTask(task){
   if (task.completed === true ){
-    taskLi = `<li class="tachado"><input class="js_checkbox" type="checkbox" value="${task.completed}" checked> ${task.name}</li>`;
+    taskLi = `<li class="tachado"><input class="js_checkbox" type="checkbox" value="${task.completed}" id="${}" checked> ${task.name}</li>`;
   }else{
     taskLi = `<li><input class="js_checkbox" type="checkbox" value="${task.completed}"> ${task.name}</li>`;
   }
      return taskLi;
      
   }
-  console.log(taskLi);
-  
 
-const taskArray = () =>{
+  const taskArray = () =>{
     for (const task of tasks){
       tasksUl.innerHTML += renderTask(task);
     }
 }
 
-taskArray();
+// punto 2
+// let taskLeftMessage = '';
+// function tasksLeft(array){
+//   const completedTrue = array.filter((array) => tasks.completed = true);
+//   console.log(completedTrue);
+//   taskLeftMessage = ``;
+// }
 
 
-//2. Escuchar el botón. si el valor de completed es true --> ponerlo en false, quitar la clase tachado --> modificar el array original
+//Pasos
+//1. Hacer click en el checkbox y coger el id con event.target.id
+//2. findIndex buscar la posición en el array tasks
+//3. con la posición del array le cambio la propiedad de completed a ese array array[posición].completed = nuevo valor
 
-const allLi = document.querySelectorAll('li');
-const checkboxes = document.querySelectorAll(".js_checkbox");
-
-let checkboxesArray = []; //el querySelectorAll devuelve un OBJETO (Nodelist) con comportamiento de array pero hay que convertirlo en array para que te deje pillar el indexOf
-
-for(const box of checkboxes){
-  checkboxesArray.push(box);
-}
-
-console.log(checkboxesArray);
-
-
-function completeToggle(event){
+function completeToggle(event, arrayBtns, arrayData){
   const boxClicked = event.target;
   const liClicked = boxClicked.parentNode;
-  const index = checkboxesArray.indexOf(boxClicked);
+  const index = arrayBtns.indexOf(boxClicked);
   
   if(boxClicked.value === 'true'){
-      tasks[index].completed = false;
+      arrayData[index].completed = false;
        boxClicked.value = false;
        liClicked.classList.remove('tachado');
        boxClicked.checked = false;
       }else{
-        tasks[index].completed = true;
+        arrayData[index].completed = true;
         boxClicked.value = true;
         liClicked.classList.add('tachado');
         boxClicked.checked = true;
       }
 
-      console.log(tasks[index]);
+      console.log(arrayData[index]);
 }
 
 
-const handleClick = (event) =>{
-  completeToggle(event);
+
+
+fetch(SERVER_URL)
+.then((response)=> response.json())
+.then((data)=>{
+  tasks = data.results;
+  console.log(tasks);
+  taskArray();
+  const checkboxes = document.querySelectorAll(".js_checkbox");
+  let checkboxesArray = [];
+
+  for(const box of checkboxes){
+    checkboxesArray.push(box);
+  }
   
-}
+  const handleClick = (event) =>{
+    completeToggle(event, checkboxesArray, tasks);
+  }
 
-for (const box of checkboxes){
-  box.addEventListener('click', handleClick);
-}
+  for(const box of checkboxes){
+    box.addEventListener('click', handleClick);
+  }
+  console.log(checkboxesArray);
+
+});
 
 
-console.log(allLi);
+
+
+
+
 
 //filtrar
 
@@ -108,3 +114,7 @@ const handleFilter = (event)=>{
 }
 
 filterBtn.addEventListener('click', handleFilter);
+
+
+
+
