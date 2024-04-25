@@ -14,24 +14,70 @@ fetch(SERVER_URL)
 .then((data)=>{
   tasks = data.results;
   console.log(tasks);
-  taskArray();
-  const checkboxes = document.querySelectorAll(".js_checkbox");
-  // let checkboxesArray = [];
-
-  // for(const box of checkboxes){
-  //   checkboxesArray.push(box);
-  // }
-  
-  const handleCheckbox = (event) =>{
-    completeToggle(event);
-  }
-
-  for(const box of checkboxes){
-    box.addEventListener('click', handleCheckbox);
-  }
+  renderTaskArray(tasks);
   
 });
 
+
+
+
+
+//Tachado
+
+function completeToggle(event){
+  const targetId = parseInt(event.target.id);
+  const taskClicked = tasks.findIndex((task) => task.id === targetId);
+  tasks[taskClicked].completed = !tasks[taskClicked].completed;
+
+}
+
+const handleCheckbox = (event) =>{
+  completeToggle(event);
+  tasksUl.innerHTML = '';
+  renderTaskArray();
+  console.log(tasks);
+}
+
+// Tachado escuchando a la ul de html
+
+// const handleCheckboxes = (event) => {
+//   const clickedCheckboxId = event.target.id;
+//   const taskIndex = findIndex((task) => task.id === clickedCheckboxId);
+//   tasks[taskIndex].complete = !tasks[taskIndex].complete
+// }
+
+// tasksUl.addEventListener('click', handleCheckboxes);
+
+
+//filtrar
+
+function filter(){
+  const valueInput = filterInput.value;
+  tasksUl.innerHTML = '';
+  const filteredTasks = tasks.filter((task) => task.name.toLowerCase().includes(valueInput.toLowerCase()));
+  
+  for (const task of filteredTasks){
+    tasksUl.innerHTML += renderTask(task);
+  }
+}
+
+
+const handleFilter = (event)=>{
+  event.preventDefault();
+  filter(event);
+}
+
+// Tareas totales
+
+// let taskLeftMessage = '';
+// function tasksLeft(array){
+//   const completedTrue = array.filter((array) => tasks.completed = true);
+//   console.log(completedTrue);
+//   taskLeftMessage = ``;
+// }
+
+
+//Render
 
 function renderTask(task){
   let taskLi = '';
@@ -44,96 +90,23 @@ function renderTask(task){
      
   }
 
-  const taskArray = () =>{
-    tasksUl.innerHTML = "";
+  const renderTaskArray = () =>{
+    tasksUl.innerHTML = '';
     for (const task of tasks){
       tasksUl.innerHTML += renderTask(task);
     }
-}
-
-// punto 2
-// let taskLeftMessage = '';
-// function tasksLeft(array){
-//   const completedTrue = array.filter((array) => tasks.completed = true);
-//   console.log(completedTrue);
-//   taskLeftMessage = ``;
-// }
-
-
-//Pasos
-//1. Hacer click en el checkbox y coger el id con event.target.id
-//2. findIndex buscar la posición en el array tasks
-//3. con la posición del array le cambio la propiedad de completed a ese array array[posición].completed = nuevo valor
-
-function completeToggle(event){
-  // tasksUl.innerHTML = "";
-  const targetId = parseInt(event.target.id);
-
-  const taskClicked = tasks.findIndex((task) => task.id === targetId);
-  
-    // if (tasks[taskClicked].completed === true) {
-    //   tasks[taskClicked].completed = false;
-
-    // } else {
-    //   tasks[taskClicked].completed = true;
-
-    // }
-   tasks[taskClicked].completed = !tasks[taskClicked].completed;
-  //  taskArray(tasks);
-    
-    console.log(renderTask(tasks[taskClicked]));
-
-  // const boxClicked = event.target;
-  // const liClicked = boxClicked.parentNode;
-  // const index = arrayBtns.indexOf(boxClicked);
-  
-  // if(boxClicked.value === 'true'){
-  //     arrayData[index].completed = false;
-  //      boxClicked.value = false;
-  //      liClicked.classList.remove('tachado');
-  //      boxClicked.checked = false;
-  //     }else{
-  //       arrayData[index].completed = true;
-  //       boxClicked.value = true;
-  //       liClicked.classList.add('tachado');
-  //       boxClicked.checked = true;
-  //     }
-
-  //     console.log(arrayData[index]);
-}
-
-taskArray(tasks);
-
-
-
-
-
-
-
-
-
-
-
-//filtrar
-
-function filter(){
-  const valueInput = filterInput.value;
-  tasksUl.innerHTML = '';
-
-  for (const task of tasks){
-    if(task.name.toLocaleLowerCase().includes(valueInput.toLocaleLowerCase())){
-      tasksUl.innerHTML += renderTask(task);
+    const checkboxes = document.querySelectorAll(".js_checkbox");
+    for(const box of checkboxes){
+      box.addEventListener('click', handleCheckbox);
     }
-  }
+    filterBtn.addEventListener('click', handleFilter);
 }
 
 
-const handleFilter = (event)=>{
-  event.preventDefault();
-  filter(event);
-}
 
-filterBtn.addEventListener('click', handleFilter);
+
+
+
 
 
 
