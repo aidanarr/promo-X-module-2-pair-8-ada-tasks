@@ -6,17 +6,33 @@ const filterInput = document.querySelector('.js-text-task-filter');
 // const GITHUB_USER = '<aidanarr>';
 // const SERVER_URL = `https://dev.adalab.es/api/todo/${GITHUB_USER}`;
 const SERVER_URL = `https://dev.adalab.es/api/todo`;
+const addTaskInput = document.querySelector(".js-text-task-add");
+const addTaskBtn = document.querySelector(".js-btn-add");
+
+
 
 let tasks = [];
+const tasksLocalStorage = JSON.parse(localStorage.getItem("tasks"));
 
-fetch(SERVER_URL)
-.then((response)=> response.json())
-.then((data)=>{
-  tasks = data.results;
-  console.log(tasks);
-  renderTaskArray(tasks);
-  
-});
+console.log(tasksLocalStorage);
+
+if (tasksLocalStorage !== null) {
+  renderTaskArray(tasksLocalStorage);
+} else {
+  fetch(SERVER_URL)
+      .then((response)=> response.json())
+      .then((data)=>{
+        tasks = data.results;
+        console.log(tasks);
+        renderTaskArray(tasks);
+        
+      })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+
 
 
 
@@ -88,6 +104,7 @@ function renderTask(task){
   }
      return taskLi;
      
+     
   }
 
   const renderTaskArray = () =>{
@@ -99,10 +116,27 @@ function renderTask(task){
     for(const box of checkboxes){
       box.addEventListener('click', handleCheckbox);
     }
+    
     filterBtn.addEventListener('click', handleFilter);
+    
 }
 
+const handleNewTask = (event) => {
+  event.preventDefault();
+  const value = addTaskInput.value;
+  const newTask = {
+    id: parseInt("16576927301" + Math.floor(Math.random() * 1000)),
+    name: value, 
+    completed: false,
+  };
 
+  tasks.push(newTask);
+  console.log(newTask.id);
+
+ renderTaskArray();
+};
+
+addTaskBtn.addEventListener("click", handleNewTask);
 
 
 
