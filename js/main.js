@@ -12,25 +12,12 @@ const addTaskBtn = document.querySelector(".js-btn-add");
 
 
 let tasks = [];
-const tasksLocalStorage = JSON.parse(localStorage.getItem("tasks"));
+
+const tasksLocalStorage = JSON.parse(localStorage.getItem("stored tasks"));
 
 console.log(tasksLocalStorage);
 
-if (tasksLocalStorage !== null) {
-  renderTaskArray(tasksLocalStorage);
-} else {
-  fetch(SERVER_URL)
-      .then((response)=> response.json())
-      .then((data)=>{
-        tasks = data.results;
-        console.log(tasks);
-        renderTaskArray(tasks);
-        
-      })
-    .catch((error) => {
-      console.error(error);
-    });
-}
+
 
 
 
@@ -138,7 +125,23 @@ const handleNewTask = (event) => {
 
 addTaskBtn.addEventListener("click", handleNewTask);
 
-
+if (tasksLocalStorage !== null) {
+  tasks = tasksLocalStorage;
+  renderTaskArray();
+  console.log(renderTaskArray);
+} else {
+  fetch(SERVER_URL)
+      .then((response)=> response.json())
+      .then((data)=>{
+        tasks = data.results;
+        console.log(tasks);
+        renderTaskArray();
+        localStorage.setItem("stored tasks", JSON.stringify(tasks));
+      })
+    .catch((error) => {
+      console.error(error);
+    });
+}
 
 
 
