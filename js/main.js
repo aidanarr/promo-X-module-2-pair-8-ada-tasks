@@ -1,83 +1,113 @@
 'use strict';
 
 const tasksUl = document.querySelector('.js-taskList');
+const filterBtn = document.querySelector('.js-btn-filter');
+const filterInput = document.querySelector('.js-text-task-filter');
+// const GITHUB_USER = '<aidanarr>';
+// const SERVER_URL = `https://dev.adalab.es/api/todo/${GITHUB_USER}`;
+const SERVER_URL = `https://dev.adalab.es/api/todo`;
 
+let tasks = [];
 
-const tasks = [
-    { name: 'Recoger setas en el campo', completed: true },
-    { name: 'Comprar pilas', completed: true },
-    { name: 'Poner una lavadora de blancos', completed: true },
-    {
-      name: 'Aprender cómo se realizan las peticiones al servidor en JavaScript',
-      completed: false,
-    },
-  ];
-
-function renderTask(task){
-    return tasksUl.innerHTML += `<li><input class="js_checkbox" type="checkbox" value="${task.completed}"> ${task.name}</li>`;
-  }
-
+fetch(SERVER_URL)
+.then((response)=> response.json())
+.then((data)=>{
+  tasks = data.results;
+  console.log(tasks);
+  renderTaskArray(tasks);
   
+});
 
-const taskArray = () =>{
-    for (const chore of tasks){
-        renderTask(chore);
-    }
+
+
+
+
+//Tachado
+
+function completeToggle(event){
+  const targetId = parseInt(event.target.id);
+  const taskClicked = tasks.findIndex((task) => task.id === targetId);
+  tasks[taskClicked].completed = !tasks[taskClicked].completed;
+
 }
 
-taskArray();
+const handleCheckbox = (event) =>{
+  completeToggle(event);
+  tasksUl.innerHTML = '';
+  renderTaskArray();
+  console.log(tasks);
+}
 
+// Tachado escuchando a la ul de html
 
-const allLi = document.querySelectorAll('li');
-
-// console.log(allLi);
-
-// function strikeLi(){
-//     for (const chore of tasks){
-        
-//         if(chore.completed === true){
-            
-//             const taskIndex = tasks.indexOf(chore);
-//             // console.log(`Esta tarea está completa` + tasks.indexOf(chore));
-
-//             const doneLi = allLi[taskIndex];
-
-//             // console.log(doneLi);
-            
-//             doneLi.classList.add('tachado');
-//         }
-        
-//     }
+// const handleCheckboxes = (event) => {
+//   const clickedCheckboxId = event.target.id;
+//   const taskIndex = findIndex((task) => task.id === clickedCheckboxId);
+//   tasks[taskIndex].complete = !tasks[taskIndex].complete
 // }
 
-const checkbox = document.querySelectorAll(".js_checkbox");
+// tasksUl.addEventListener('click', handleCheckboxes);
 
-console.log(checkbox);
 
-function strikeLi(array){
-  // for (const item of checkbox) {
-  //   if (item.value === "true") {
-  //     item.checked = true;
+//filtrar
 
-  //     // const taskIndex = checkbox.indexOf(item);
-  //     // console.log(taskIndex);
-  //     // const doneLi = allLi[taskIndex];
-  //     // doneLi.classList.add("tachado");
-  //   }
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].value === "true") {
-      array[i].checked = true;
-      allLi[i].classList.add("tachado");
-    } else {
-      allLi[i].classList.remove("tachado");
-    }
-    console.log(array[i].value);
+function filter(){
+  const valueInput = filterInput.value;
+  tasksUl.innerHTML = '';
+  const filteredTasks = tasks.filter((task) => task.name.toLowerCase().includes(valueInput.toLowerCase()));
+  
+  for (const task of filteredTasks){
+    tasksUl.innerHTML += renderTask(task);
+  }
+}
+
+
+const handleFilter = (event)=>{
+  event.preventDefault();
+  filter(event);
+}
+
+// Tareas totales
+
+// let taskLeftMessage = '';
+// function tasksLeft(array){
+//   const completedTrue = array.filter((array) => tasks.completed = true);
+//   console.log(completedTrue);
+//   taskLeftMessage = ``;
+// }
+
+
+//Render
+
+function renderTask(task){
+  let taskLi = '';
+  if (task.completed === true ){
+    taskLi = `<li class="tachado"><input class="js_checkbox" type="checkbox" value="${task.completed}" id="${task.id}" checked> ${task.name}</li>`;
+  }else{
+    taskLi = `<li><input class="js_checkbox" type="checkbox" id="${task.id}" value="${task.completed}"> ${task.name}</li>`;
+  }
+     return taskLi;
+     
   }
 
+  const renderTaskArray = () =>{
+    tasksUl.innerHTML = '';
+    for (const task of tasks){
+      tasksUl.innerHTML += renderTask(task);
+    }
+    const checkboxes = document.querySelectorAll(".js_checkbox");
+    for(const box of checkboxes){
+      box.addEventListener('click', handleCheckbox);
+    }
+    filterBtn.addEventListener('click', handleFilter);
 }
 
 
 
-// strikeLi(checkbox);
+
+
+
+
+
 
 
